@@ -2,8 +2,7 @@ package nl.wesleydev.wesleydev;
 
 import net.milkbowl.vault.economy.Economy;
 import nl.wesleydev.wesleydev.commands.CommandWesleyDev;
-import nl.wesleydev.wesleydev.listeners.EntityDeathListener;
-import org.bukkit.Server;
+import nl.wesleydev.wesleydev.listeners.MonsterKillRewardListener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,7 +13,8 @@ public class WesleyDevPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         if (!setupEconomy() ) {
-            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!",
+                    getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -35,7 +35,7 @@ public class WesleyDevPlugin extends JavaPlugin {
 
     private void InitializeListeners() {
         if (economy != null) {
-            getServer().getPluginManager().registerEvents(new EntityDeathListener(this, economy), this);
+            getServer().getPluginManager().registerEvents(new MonsterKillRewardListener(this, economy), this);
         }
     }
 
