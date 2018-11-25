@@ -1,3 +1,7 @@
 name: WesleyDev
 version: 1.13.0
 main: nl.wesleydev.wesleydev.WesleyDevPlugin
+commands:
+  wesleydev:
+    description: Main command of WesleyDev
+    usage: /wesleydev
