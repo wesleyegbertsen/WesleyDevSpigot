@@ -25,7 +25,7 @@ public class EntityDeathListener implements Listener {
         LivingEntity livingEntity = event.getEntity();
 
         if (ShouldHandleEvent(player, livingEntity)) {
-            EconomyResponse economyResponse = economy.depositPlayer(player, GetRandomRewardAmount());
+            EconomyResponse economyResponse = economy.depositPlayer(player, GetRandomRewardAmount(event));
             if(economyResponse.transactionSuccess()) {
                 player.sendMessage(String.format("You killed a %s, giving you %s. You now have %s",
                         livingEntity.getName(),
@@ -46,8 +46,18 @@ public class EntityDeathListener implements Listener {
         return player != null && livingEntity instanceof Monster;
     }
 
-    private int GetRandomRewardAmount() {
-        int maxRewardAmount = 20;
-        return (int)(Math.random() * maxRewardAmount + 1);
+    private int GetRandomRewardAmount(EntityDeathEvent event) {
+        int droppedExp = event.getDroppedExp();
+        int minRewardAmount = GetPercentage(droppedExp, 20);
+        int maxRewardAmount = GetPercentage(droppedExp, 80);
+        return GetRandomInteger(minRewardAmount, maxRewardAmount);
+    }
+
+    private int GetPercentage(int value, int percentage) {
+        return (int)(value*(percentage/100.0f));
+    }
+
+    private int GetRandomInteger(int min, int max) {
+        return (int)(Math.random() * ((max - min) + 1)) + min;
     }
 }
