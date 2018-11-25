@@ -2,6 +2,7 @@ package nl.wesleydev.wesleydev.listeners;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -47,9 +48,17 @@ public class EntityDeathListener implements Listener {
     }
 
     private int GetRandomRewardAmount(EntityDeathEvent event) {
+        int maxHealthKilledEntity = (int) event.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+
+        //maxHealthKilledEntity is divided by 2, because max health for vanilla monster is 20
+        //This in turn will set the minimum of rewardHealthModifier to 1 when it's a vanilla monster
+        //Allowing mobs from plugins with more health to give better rewards, thus making it fair.
+        int minRewardHealthModifier = GetPercentage(maxHealthKilledEntity / 2, 10);
+        int rewardHealthModifier = GetRandomInteger(minRewardHealthModifier, maxHealthKilledEntity / 2);
+
         int droppedExp = event.getDroppedExp();
         int minRewardAmount = GetPercentage(droppedExp, 20);
-        int maxRewardAmount = GetPercentage(droppedExp, 80);
+        int maxRewardAmount = GetPercentage(droppedExp, 80) * rewardHealthModifier;
         return GetRandomInteger(minRewardAmount, maxRewardAmount);
     }
 
