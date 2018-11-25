@@ -19,7 +19,7 @@ public class WesleyDevPlugin extends JavaPlugin {
             return;
         }
 
-        InitializeCommands(getServer());
+        InitializeCommands();
         InitializeListeners();
         super.onEnable();
     }
@@ -29,7 +29,7 @@ public class WesleyDevPlugin extends JavaPlugin {
         super.onDisable();
     }
 
-    private void InitializeCommands(Server server) {
+    private void InitializeCommands() {
         getCommand("wesleydev").setExecutor(new CommandWesleyDev(this));
     }
 
