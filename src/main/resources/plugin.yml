@@ -1,6 +1,8 @@
 name: WesleyDev
 version: 1.13.0
 main: nl.wesleydev.wesleydev.WesleyDevPlugin
+depend:
+  - Vault
 commands:
   wesleydev:
     description: Main command of WesleyDev
