@@ -6,4 +6,5 @@ depend:
 commands:
   wesleydev:
     description: Main command of WesleyDev
-    usage: /wesleydev
+    aliases: [wd]
+    usage: /<command> [buy <item [ammount]>]

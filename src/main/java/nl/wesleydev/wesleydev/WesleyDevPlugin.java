@@ -30,7 +30,11 @@ public class WesleyDevPlugin extends JavaPlugin {
     }
 
     private void InitializeCommands() {
-        getCommand("wesleydev").setExecutor(new CommandWesleyDev(this));
+        String wesleyDevCmd = "wesleydev";
+
+        CommandWesleyDev commandWesleyDev = new CommandWesleyDev(this, economy);
+        getCommand(wesleyDevCmd).setTabCompleter(commandWesleyDev);
+        getCommand(wesleyDevCmd).setExecutor(commandWesleyDev);
     }
 
     private void InitializeListeners() {
