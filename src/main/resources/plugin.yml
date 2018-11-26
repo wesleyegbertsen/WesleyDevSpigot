@@ -1,5 +1,6 @@
 name: WesleyDev
 version: 1.13.0
+api-version: 1.13
 main: nl.wesleydev.wesleydev.WesleyDevPlugin
 depend:
   - Vault

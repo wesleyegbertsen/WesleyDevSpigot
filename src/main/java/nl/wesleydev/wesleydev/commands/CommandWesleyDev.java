@@ -2,8 +2,8 @@ package nl.wesleydev.wesleydev.commands;
 
 import com.google.common.collect.Lists;
 import net.milkbowl.vault.economy.Economy;
-import nl.wesleydev.wesleydev.commands.enums.WesleyDevBuyItem;
 import nl.wesleydev.wesleydev.commands.enums.WesleyDevCommandType;
+import nl.wesleydev.wesleydev.commands.immutables.BuyableMaterial;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -18,12 +18,22 @@ import java.util.List;
 public class CommandWesleyDev implements TabExecutor {
 
     //TODO: When returning false log back to the command sender why
-
-    private Plugin plugin;
     private Economy economy;
 
-    public CommandWesleyDev(Plugin plugin, Economy economy) {
-        this.plugin = plugin;
+    /**
+     * Materials that players are allowed to buy
+     */
+    private static final BuyableMaterial[] BUYABLE_MATERIALS = new BuyableMaterial[] {
+        new BuyableMaterial(Material.DIAMOND, 1000),
+        new BuyableMaterial(Material.GOLD_INGOT, 750),
+        new BuyableMaterial(Material.IRON_INGOT, 500),
+        new BuyableMaterial(Material.COAL, 100),
+        new BuyableMaterial(Material.REDSTONE, 250),
+        new BuyableMaterial(Material.LAPIS_LAZULI, 250),
+        new BuyableMaterial(Material.EMERALD, 750)
+    };
+
+    public CommandWesleyDev(Economy economy) {
         this.economy = economy;
     }
 
@@ -31,7 +41,7 @@ public class CommandWesleyDev implements TabExecutor {
         if (args.length > 0) {
             switch (WesleyDevCommandType.fromString(args[0])) {
                 case BUY:
-                    return HandleBuyCommand(sender, command, label, args);
+                    return HandleBuyCommand(sender, args);
             }
         } else {
             sender.sendMessage("WesleyDev: Thank you for using WesleyDev!");
@@ -41,52 +51,47 @@ public class CommandWesleyDev implements TabExecutor {
         return false;
     }
 
-    private boolean HandleBuyCommand(CommandSender sender, Command command, String label, String[] args) {
-        int itemCost = 1000;
-
+    private boolean HandleBuyCommand(CommandSender sender, String[] args) {
         if(args.length >= 2 && sender instanceof Player) {
             Player player = (Player) sender;
+            String material = args[1];
+            BuyableMaterial buyableMaterial = BuyableMaterial.getFromArray(BUYABLE_MATERIALS, material);
 
-            switch (WesleyDevBuyItem.fromString(args[1])) {
-                case DIAMOND:
-                    //Buy diamond with the given amount of diamonds in args[2]
-                    try {
-                        int amountToBuy = args.length == 3 ? Integer.parseInt(args[2]) : 1;
-                        int totalCost = itemCost * amountToBuy;
-                        //Making sure there is no integer overflow, and the player is not buying 0 diamonds
-                        if (totalCost < 1) return false;
-                        double playerBalance = economy.getBalance(player);
-                        String diamondMessage = amountToBuy == 1 ? "diamond" : "diamonds";
+            if (buyableMaterial != null) {
+                //Buy material with the given amount of the material in args[2]
+                try {
+                    int amountToBuy = args.length == 3 ? Integer.parseInt(args[2]) : 1;
+                    double totalCost = buyableMaterial.getPrice() * amountToBuy;
+                    //Making sure there is no integer overflow, and the player is not buying 0 materials
+                    if (totalCost < 1) return false;
+                    double playerBalance = economy.getBalance(player);
+                    String materialDescription = amountToBuy == 1 ? material : String.format("%ss", material);
 
-                        if (playerBalance >= totalCost && economy.withdrawPlayer(player, totalCost).transactionSuccess()) {
-                            ItemStack diamonds = new ItemStack(Material.DIAMOND, amountToBuy);
-                            player.getInventory().addItem(diamonds);
+                    if (playerBalance >= totalCost && economy.withdrawPlayer(player, totalCost).transactionSuccess()) {
+                        ItemStack materials = new ItemStack(buyableMaterial.getMaterial(), amountToBuy);
+                        player.getInventory().addItem(materials);
 
-                            player.sendMessage(String.format("You bought %s %s, costing you %s. You now have %s",
-                                    amountToBuy,
-                                    diamondMessage,
-                                    economy.format(totalCost),
-                                    economy.format(playerBalance - totalCost)));
-                        } else {
-                            player.sendMessage(String.format("You tried to buy %s %s, costing you %s, " +
-                                            "but you only have %s",
-                                    amountToBuy,
-                                    diamondMessage,
-                                    economy.format(totalCost),
-                                    economy.format(playerBalance)));
-                        }
-                    } catch (NumberFormatException e) {
-                        return false;
+                        player.sendMessage(String.format("You bought %s %s, costing you %s. You now have %s",
+                                amountToBuy,
+                                materialDescription,
+                                economy.format(totalCost),
+                                economy.format(playerBalance - totalCost)));
+                    } else {
+                        player.sendMessage(String.format("You tried to buy %s %s, costing you %s, " +
+                                        "but you only have %s",
+                                amountToBuy,
+                                materialDescription,
+                                economy.format(totalCost),
+                                economy.format(playerBalance)));
                     }
                     return true;
-                default:
+                } catch (NumberFormatException e) {
                     return false;
+                }
             }
-        } else {
-            return false;
         }
+        return false;
     }
-
 
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
@@ -94,7 +99,7 @@ public class CommandWesleyDev implements TabExecutor {
         } else if (args.length == 2) {
             switch (WesleyDevCommandType.fromString(args[0])) {
                 case BUY:
-                    return Lists.newArrayList("diamond");
+                    return BuyableMaterial.getAsEnumStringList(BUYABLE_MATERIALS);
                 default:
                     return Collections.emptyList();
             }

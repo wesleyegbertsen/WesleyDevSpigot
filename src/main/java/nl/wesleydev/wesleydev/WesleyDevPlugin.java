@@ -6,6 +6,7 @@ import nl.wesleydev.wesleydev.listeners.MonsterKillRewardListener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@SuppressWarnings("unused")
 public class WesleyDevPlugin extends JavaPlugin {
 
     private static Economy economy = null;
@@ -32,7 +33,7 @@ public class WesleyDevPlugin extends JavaPlugin {
     private void InitializeCommands() {
         String wesleyDevCmd = "wesleydev";
 
-        CommandWesleyDev commandWesleyDev = new CommandWesleyDev(this, economy);
+        CommandWesleyDev commandWesleyDev = new CommandWesleyDev(economy);
         getCommand(wesleyDevCmd).setTabCompleter(commandWesleyDev);
         getCommand(wesleyDevCmd).setExecutor(commandWesleyDev);
     }
