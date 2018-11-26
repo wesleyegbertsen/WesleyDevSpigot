@@ -20,7 +20,8 @@ A Minecraft Spigot plugin for my WesleyDev Minecraft servers.
         (',' is the delimiter for the range).
             - Formula: rand(0.20 * x, (0.80 * x) * rand((0.10 * h) / 2, h / 2))
     - Rewarded with an economy through the Vault API: https://github.com/MilkBowl/VaultAPI
-- Players can buy diamonds for $1000 each with the command: "/wesleydev buy diamond [amount]"
+- Players can buy various materials with the command: "/wesleydev buy &lt;material&gt; [amount]"
+- Players can check the price of various materials with the command: "/wesleydev price &lt;material&gt; [amount]"
 - More features are work in progress
 
 ## Why this plugin?
