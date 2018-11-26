@@ -10,7 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +40,9 @@ public class CommandWesleyDev implements TabExecutor {
         if (args.length > 0) {
             switch (WesleyDevCommandType.fromString(args[0])) {
                 case BUY:
-                    return HandleBuyCommand(sender, args);
+                    return handleBuyCommand(sender, args);
+                case PRICE:
+                    return handlePriceCommand(sender, args);
             }
         } else {
             sender.sendMessage("WesleyDev: Thank you for using WesleyDev!");
@@ -51,8 +52,9 @@ public class CommandWesleyDev implements TabExecutor {
         return false;
     }
 
-    private boolean HandleBuyCommand(CommandSender sender, String[] args) {
-        if(args.length >= 2 && sender instanceof Player) {
+    private boolean handleBuyCommand(CommandSender sender, String[] args) {
+        if (args.length > 3) return false;
+        if (args.length >= 2 && sender instanceof Player) {
             Player player = (Player) sender;
             String material = args[1];
             BuyableMaterial buyableMaterial = BuyableMaterial.getFromArray(BUYABLE_MATERIALS, material);
@@ -93,12 +95,43 @@ public class CommandWesleyDev implements TabExecutor {
         return false;
     }
 
+    private boolean handlePriceCommand(CommandSender sender, String[] args) {
+        if (args.length > 3) return false;
+        if (args.length >= 2) {
+            String material = args[1];
+            BuyableMaterial buyableMaterial = BuyableMaterial.getFromArray(BUYABLE_MATERIALS, material);
+
+            if (buyableMaterial != null) {
+                try {
+                    int amountToCalculatePrice = args.length == 3 ? Integer.parseInt(args[2]) : 1;
+                    double totalCost = buyableMaterial.getPrice() * amountToCalculatePrice;
+                    //Making sure there is no integer overflow, and the sender is not checking price of 0 materials
+                    if (totalCost < 1) return false;
+                    String materialDescription = amountToCalculatePrice == 1 ? material : String.format("%ss", material);
+
+                    sender.sendMessage(String.format("The price of %s %s is %s",
+                            amountToCalculatePrice,
+                            materialDescription,
+                            economy.format(totalCost)));
+                    return true;
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Lists.newArrayList("buy");
+            return Lists.newArrayList(
+                WesleyDevCommandType.BUY.getText(),
+                WesleyDevCommandType.PRICE.getText()
+            );
         } else if (args.length == 2) {
             switch (WesleyDevCommandType.fromString(args[0])) {
                 case BUY:
+                case PRICE:
                     return BuyableMaterial.getAsEnumStringList(BUYABLE_MATERIALS);
                 default:
                     return Collections.emptyList();

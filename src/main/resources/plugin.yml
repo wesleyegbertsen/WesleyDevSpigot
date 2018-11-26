@@ -8,4 +8,4 @@ commands:
   wesleydev:
     description: Main command of WesleyDev
     aliases: [wd]
-    usage: /<command> [buy <item [amount]>]
+    usage: /<command> [buy|price <item [amount]>]
