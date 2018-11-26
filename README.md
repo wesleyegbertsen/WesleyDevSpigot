@@ -15,8 +15,12 @@ A Minecraft Spigot plugin for my WesleyDev Minecraft servers.
             But monsters from plugins with higher health than normal have a 
             higher minimum. The max of this modifier is the max health
             of the monster divided by 2.
+        - The reward can be summed up by the following formula, where 'x' = dropped experience, 
+        'h' = maximum monster health, and rand() = a random number for the given range 
+        (',' is the delimiter for the range).
+            - Formula: rand(0.20 * x, rand((0.10 * h) / 2), h / 2)
     - Rewarded with an economy through the Vault API: https://github.com/MilkBowl/VaultAPI
-- Players can buy diamonds for $1.000 each with the command: "/wesleydev buy diamond [amount]"
+- Players can buy diamonds for $1000 each with the command: "/wesleydev buy diamond [amount]"
 - More features are work in progress
 
 ## Why this plugin?
