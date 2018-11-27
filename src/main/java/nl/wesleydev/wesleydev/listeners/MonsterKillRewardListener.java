@@ -2,7 +2,9 @@ package nl.wesleydev.wesleydev.listeners;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+import nl.wesleydev.wesleydev.enums.Permission;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -153,7 +155,13 @@ public class MonsterKillRewardListener implements Listener {
      * @return Returns true if entity is a monster and damaged by a player.
      */
     private boolean shouldHandleEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
-        return event.getDamager() instanceof Player && event.getEntity() instanceof Monster;
+        return event.getDamager() instanceof Player && event.getEntity() instanceof Monster
+                && hasMonsterKillRewardPermission(event.getDamager());
+    }
+
+    private boolean hasMonsterKillRewardPermission(CommandSender sender) {
+        return Permission.hasPermission(sender, Permission.ECONOMY)
+                || Permission.hasPermission(sender, Permission.ECONOMY_MONSTERKILLREWARD);
     }
 
     /**

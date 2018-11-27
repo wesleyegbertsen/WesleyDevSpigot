@@ -9,3 +9,17 @@ commands:
     description: Main command of WesleyDev
     aliases: [wd]
     usage: /<command> [buy|price <item [amount]>]
+permissions:
+  wesleydev.all:
+    default: op
+    description: Give operators access to all permissions by default
+  wesleydev.economy:
+    default: true
+    description: Access to all WesleyDev economy related features
+    children:
+      wesleydev.economy.buy:
+        description: Access to buying materials
+      wesleydev.economy.price:
+        description: Access to checking the price of materials
+      wesleydev.economy.monsterkillreward:
+        description: Player will receive economy reward when killing monsters

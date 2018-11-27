@@ -24,6 +24,24 @@ A Minecraft Spigot plugin for my WesleyDev Minecraft servers.
 - Players can check the price of various materials with the command: "/wesleydev price &lt;material&gt; [amount]"
 - More features are work in progress
 
+## Plugin permissions
+
+```
+wesleydev.all:
+    default: op
+    description: Give operators access to all permissions by default
+  wesleydev.economy:
+    default: true
+    description: Access to all WesleyDev economy related features
+    children:
+      wesleydev.economy.buy:
+        description: Access to buying materials
+      wesleydev.economy.price:
+        description: Access to checking the price of materials
+      wesleydev.economy.monsterkillreward:
+        description: Player will receive economy reward when killing monsters
+```
+
 ## Why this plugin?
 I've started developing this plugin, 
 because I love hooking into a game api and use the api to enhance the gameplay.

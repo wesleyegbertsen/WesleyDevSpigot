@@ -9,6 +9,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 @SuppressWarnings("unused")
 public class WesleyDevPlugin extends JavaPlugin {
 
+    public static final String Name = "WesleyDev";
+
     private static Economy economy = null;
 
     @Override

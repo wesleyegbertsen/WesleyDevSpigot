@@ -2,8 +2,10 @@ package nl.wesleydev.wesleydev.commands;
 
 import com.google.common.collect.Lists;
 import net.milkbowl.vault.economy.Economy;
+import nl.wesleydev.wesleydev.WesleyDevPlugin;
 import nl.wesleydev.wesleydev.commands.enums.WesleyDevCommandType;
 import nl.wesleydev.wesleydev.commands.immutables.BuyableMaterial;
+import nl.wesleydev.wesleydev.enums.Permission;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -40,16 +42,28 @@ public class CommandWesleyDev implements TabExecutor {
         if (args.length > 0) {
             switch (WesleyDevCommandType.fromString(args[0])) {
                 case BUY:
+                    if (!hasBuyPermission(sender)) return true;
                     return handleBuyCommand(sender, args);
                 case PRICE:
+                    if (!hasPricePermission(sender)) return true;
                     return handlePriceCommand(sender, args);
             }
         } else {
-            sender.sendMessage("WesleyDev: Thank you for using WesleyDev!");
+            sender.sendMessage(String.format("[%s] Thank you for using this plugin!", WesleyDevPlugin.Name));
             return true;
         }
 
         return false;
+    }
+
+    private boolean hasBuyPermission(CommandSender sender) {
+        if (Permission.hasPermission(sender, Permission.ECONOMY)
+                || Permission.hasPermission(sender, Permission.ECONOMY_BUY)) {
+            return true;
+        } else {
+            Permission.sendNoPermissionMessage(sender);
+            return false;
+        }
     }
 
     private boolean handleBuyCommand(CommandSender sender, String[] args) {
@@ -93,6 +107,16 @@ public class CommandWesleyDev implements TabExecutor {
             }
         }
         return false;
+    }
+
+    private boolean hasPricePermission(CommandSender sender) {
+        if (Permission.hasPermission(sender, Permission.ECONOMY)
+                || Permission.hasPermission(sender, Permission.ECONOMY_PRICE)) {
+            return true;
+        } else {
+            Permission.sendNoPermissionMessage(sender);
+            return false;
+        }
     }
 
     private boolean handlePriceCommand(CommandSender sender, String[] args) {
