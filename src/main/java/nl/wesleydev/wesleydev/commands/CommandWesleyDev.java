@@ -6,6 +6,7 @@ import nl.wesleydev.wesleydev.WesleyDevPlugin;
 import nl.wesleydev.wesleydev.commands.enums.WesleyDevCommandType;
 import nl.wesleydev.wesleydev.commands.immutables.BuyableMaterial;
 import nl.wesleydev.wesleydev.enums.Permission;
+import nl.wesleydev.wesleydev.helpers.ListHelper;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,6 +14,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -146,22 +148,24 @@ public class CommandWesleyDev implements TabExecutor {
         return false;
     }
 
+    private static final String[] WESLEYDEV_COMMANDS = new String[] {
+            WesleyDevCommandType.BUY.getText(),
+            WesleyDevCommandType.PRICE.getText()
+    };
+
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Lists.newArrayList(
-                WesleyDevCommandType.BUY.getText(),
-                WesleyDevCommandType.PRICE.getText()
-            );
+            return ListHelper.getItemsStartWithValue(Arrays.asList(WESLEYDEV_COMMANDS), args[0]);
         } else if (args.length == 2) {
             switch (WesleyDevCommandType.fromString(args[0])) {
                 case BUY:
                 case PRICE:
-                    return BuyableMaterial.getAsEnumStringList(BUYABLE_MATERIALS);
+                    return ListHelper.getItemsContainValue(BuyableMaterial.getAsEnumStringList(BUYABLE_MATERIALS), args[1]);
                 default:
                     return Collections.emptyList();
             }
         } else if (args.length == 3) {
-            return Lists.newArrayList("1", "10", "100", "1000");
+            return ListHelper.getItemsStartWithValue(Lists.newArrayList("1", "10", "100", "1000"), args[2]);
         } else {
             return Collections.emptyList();
         }
