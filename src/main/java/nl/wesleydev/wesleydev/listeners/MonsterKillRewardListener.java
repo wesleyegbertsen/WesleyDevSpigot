@@ -3,6 +3,7 @@ package nl.wesleydev.wesleydev.listeners;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import nl.wesleydev.wesleydev.enums.Permission;
+import nl.wesleydev.wesleydev.helpers.MathHelper;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -112,21 +113,13 @@ public class MonsterKillRewardListener implements Listener {
         //maxHealthKilledEntity is divided by 2, because max health for vanilla monster is 20
         //This in turn will set the minimum of rewardHealthModifier to 1 when it's a vanilla monster
         //Allowing mobs from plugins with more health to give better rewards, thus making it fair.
-        int minRewardHealthModifier = getPercentage(maxHealthKilledEntity / 2, 10);
-        int rewardHealthModifier = getRandomInteger(minRewardHealthModifier, maxHealthKilledEntity / 2);
+        int minRewardHealthModifier = MathHelper.getPercentage(maxHealthKilledEntity / 2, 10);
+        int rewardHealthModifier = MathHelper.getRandomInteger(minRewardHealthModifier, maxHealthKilledEntity / 2);
 
         int droppedExp = event.getDroppedExp();
-        int minRewardAmount = getPercentage(droppedExp, 20);
-        int maxRewardAmount = getPercentage(droppedExp, 80) * rewardHealthModifier;
-        return getRandomInteger(minRewardAmount, maxRewardAmount);
-    }
-
-    private int getPercentage(int value, int percentage) {
-        return (int)(value*(percentage/100.0f));
-    }
-
-    private int getRandomInteger(int min, int max) {
-        return (int)(Math.random() * ((max - min) + 1)) + min;
+        int minRewardAmount = MathHelper.getPercentage(droppedExp, 20);
+        int maxRewardAmount = MathHelper.getPercentage(droppedExp, 80) * rewardHealthModifier;
+        return MathHelper.getRandomInteger(minRewardAmount, maxRewardAmount);
     }
 
     /**
